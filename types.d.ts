@@ -1,4 +1,6 @@
 
+declare module 'quill-image-uploader'
+
 declare namespace Result {
   type Base = {
     status?: number

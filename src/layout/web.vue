@@ -111,6 +111,11 @@ watch(currentRoute, newRoute => {
         }
       }
     }
+    .content {
+      padding-top: 61px;
+      min-height: 100vh;
+      background-color: #f2f3f5;
+    }
   }
 }
 </style>
