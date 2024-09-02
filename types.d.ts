@@ -32,6 +32,10 @@ declare namespace User {
     email?: string
     phone?: string
   }
+  type Login = {
+    username?: string
+    password?: string
+  }
 }
 
 declare namespace Question {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import Delta from 'quill-delta'
 import { QuillEditor } from '@vueup/vue-quill'
-import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import ImageUploader from 'quill-image-uploader'
 import { ref } from 'vue'
 import { post } from '@/api'
@@ -27,12 +27,22 @@ const modules = ref({
     }
   }
 })
+const content = ref<Delta>(new Delta([
+  { insert: '请输入' }
+]))
 </script>
 
 <template>
-  <quill-editor :modules="modules" toolbar="full" />
+  <div class="home">
+    <quill-editor v-model:content="content" enable :modules="modules" toolbar="full" />
+  </div>
 </template>
 
-<style scoped>
-
+<style scoped lang="scss">
+.home {
+  display: flex;
+  padding: 32px;
+  flex-direction: column;
+  color: #2c3e50;;
+}
 </style>

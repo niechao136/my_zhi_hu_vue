@@ -2,6 +2,8 @@ import './assets/main.css'
 import 'element-plus/dist/index.css'
 import Element from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+// VueQuill
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
