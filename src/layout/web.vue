@@ -1,11 +1,18 @@
 <script setup lang="ts">
 
-import { ref, watch } from 'vue'
+import { ref, watch, onBeforeMount } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
 import logo from '@/assets/image/logo.svg'
 import { Avatar, BellFilled, Search } from '@element-plus/icons-vue'
+import { post } from '@/api'
+import { useLoading } from '@/hook'
+import { useToken, useUser } from '@/store'
 
 const { currentRoute } = useRouter()
+const { startLoading, stopLoading } = useLoading()
+const { initToken } = useToken()
+const { getOwner } = useUser()
+
 const index = ref('')
 watch(currentRoute, newRoute => {
   switch (newRoute.fullPath) {
@@ -20,6 +27,13 @@ watch(currentRoute, newRoute => {
       break
   }
 }, { immediate: true })
+
+onBeforeMount(async () => {
+  initToken()
+  startLoading('web')
+  await getOwner()
+  stopLoading('web')
+})
 </script>
 
 <template>
@@ -52,12 +66,12 @@ watch(currentRoute, newRoute => {
           <el-button type="primary">提问</el-button>
           <el-popover trigger="click" placement="bottom">
             <template #reference>
-              <el-button plain type="text" :icon="BellFilled"/>
+              <el-button plain link :icon="BellFilled"/>
             </template>
           </el-popover>
           <el-popover trigger="click" placement="bottom">
             <template #reference>
-              <el-button plain type="text" :icon="Avatar"/>
+              <el-button plain link :icon="Avatar"/>
             </template>
           </el-popover>
         </div>

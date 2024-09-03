@@ -1,9 +1,12 @@
 import axios from 'axios'
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
-import { useLoading, useMsg } from '@/hook'
+import { useRouter } from 'vue-router'
+import { useLoading, useMsg, useTip } from '@/hook'
+import { Result } from '@/type'
 
-// const { stopLoading } = useLoading()
-// const { errorMsg } = useMsg()
+const { closeLoading } = useLoading()
+const { errorMsg } = useMsg()
+const { showTip } = useTip()
 
 const config: AxiosRequestConfig = {
   timeout: 300 * 1000,
@@ -32,17 +35,36 @@ service.interceptors.request.use(
     }
     return config
   }, () => {
-    // stopLoading()
-    // errorMsg('Request Error')
+    closeLoading()
+    errorMsg('Request Error')
   }
 )
 
 service.interceptors.response.use(
-  (response) => {
+  async (response: AxiosResponse<Result.Base>) => {
+    const { push } = useRouter()
+    if (response?.data?.status === 400) {
+      closeLoading()
+      await push('/login')
+      return Promise.reject(response)
+    }
+    if (response?.data?.status === 401) {
+      closeLoading()
+      await showTip({
+        title: '用户登出',
+        msg: '用户已登出，请重新登入',
+        confirm_text: '重新登入',
+        block_close: true,
+        confirm: async () => {
+          await push('/login')
+        }
+      })
+      return Promise.reject(response)
+    }
     return response
   }, (error) => {
-    // stopLoading()
-    // errorMsg('Network Error')
+    closeLoading()
+    errorMsg('Network Error')
     return Promise.reject(error)
   }
 )

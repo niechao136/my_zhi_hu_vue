@@ -1,23 +1,29 @@
-import { ElLoading } from 'element-plus'
-import type { LoadingOptions } from 'element-plus'
+import { ElLoadingService } from 'element-plus'
 import { ref } from 'vue'
 
 export const useLoading = () => {
 
-  const instance = ref(null)
+  const instance = ElLoadingService({
+    lock: true,
+    fullscreen: true,
+    text: 'Loading...',
+    background: 'rgba(255, 255, 255, 0.7)',
+    visible: false,
+  })
+  const array = ref<string[]>([])
 
-  const startLoading = (option: LoadingOptions = {}) => {
-    instance.value = ElLoading.service({
-      lock: true,
-      fullscreen: true,
-      text: 'Loading...',
-      background: 'rgba(255, 255, 255, 0.7)',
-      ...option
-    })
+  const startLoading = (key: string) => {
+    array.value.push(key)
+    instance.visible.value = true
   }
 
-  const stopLoading = () => instance.value?.close()
+  const stopLoading = (key: string) => {
+    array.value = array.value.filter(o => o !== key)
+    if (array.value.length === 0) instance.close()
+  }
 
-  return { startLoading, stopLoading }
+  const closeLoading = () => instance.close()
+
+  return { closeLoading, startLoading, stopLoading }
   
 }

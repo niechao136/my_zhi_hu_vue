@@ -1,4 +1,5 @@
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { Result } from '@/type'
 import request from './config'
 
 type PostOption<T> = {
