@@ -1,0 +1,58 @@
+<script setup lang="ts">
+import { QuillEditor } from '@vueup/vue-quill'
+import ImageUploader from 'quill-image-uploader'
+import BlotFormatter from 'quill-blot-formatter'
+import { ref, watch } from 'vue'
+import { post } from '@/api'
+
+defineOptions({
+  name: 'RichTextEditor'
+})
+
+const editor = ref<QuillEditor>(null)
+const model = defineModel<string>()
+const modules = ref([
+  {
+    name: 'imageUploader',
+    module: ImageUploader,
+    options: {
+      upload: (file: File) => {
+        return new Promise((resolve, reject) => {
+          const formData = new FormData();
+          formData.append("file", file);
+
+          post({
+            url: 'image/upload',
+            data: formData,
+          }).then((res) => {
+            resolve(res?.data?.data)
+          }).catch(err => {
+            reject(err)
+          })
+        })
+      }
+    }
+  },
+  {
+    name: 'blotFormatter',
+    module: BlotFormatter,
+  }
+])
+watch(model, newVal => {
+  if (newVal === '') {
+    editor.value.setHTML('')
+  }
+})
+</script>
+
+<template>
+  <div class="rich-text-editor">
+    <quill-editor ref="editor" v-model:content="model" enable :modules="modules" toolbar="full" content-type="html" />
+  </div>
+</template>
+
+<style scoped>
+.rich-text-editor {
+  color: #282828;
+}
+</style>

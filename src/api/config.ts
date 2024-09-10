@@ -1,12 +1,13 @@
 import axios from 'axios'
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
-import { useRouter } from 'vue-router'
 import { useLoading, useMsg, useTip } from '@/hook'
+import { useToken } from '@/store'
 import { Result } from '@/type'
 
 const { closeLoading } = useLoading()
 const { errorMsg } = useMsg()
 const { showTip } = useTip()
+const { getToken } = useToken()
 
 const config: AxiosRequestConfig = {
   timeout: 300 * 1000,
@@ -33,6 +34,9 @@ service.interceptors.request.use(
     if (!!form_data.find(o => config.url?.endsWith(o))) {
       config.headers['Content-Type'] = 'multipart/form-data'
     }
+    if (!not_need_token.find(o => config.url?.endsWith(o))) {
+      config.headers.Authorization = getToken()
+    }
     return config
   }, () => {
     closeLoading()
@@ -42,10 +46,9 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
   async (response: AxiosResponse<Result.Base>) => {
-    const { push } = useRouter()
     if (response?.data?.status === 400) {
       closeLoading()
-      await push('/login')
+      location.href = '/login'
       return Promise.reject(response)
     }
     if (response?.data?.status === 401) {
@@ -55,8 +58,8 @@ service.interceptors.response.use(
         msg: '用户已登出，请重新登入',
         confirm_text: '重新登入',
         block_close: true,
-        confirm: async () => {
-          await push('/login')
+        confirm: () => {
+          location.href = '/login'
         }
       })
       return Promise.reject(response)
