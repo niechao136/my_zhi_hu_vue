@@ -9,6 +9,13 @@ defineOptions({
   name: 'RichTextEditor'
 })
 
+const prop = defineProps({
+  placeholder: {
+    type: String,
+    default: () => '',
+  }
+})
+
 const editor = ref<QuillEditor>(null)
 const model = defineModel<string>()
 const modules = ref([
@@ -47,11 +54,19 @@ watch(model, newVal => {
 
 <template>
   <div class="rich-text-editor">
-    <quill-editor ref="editor" v-model:content="model" enable :modules="modules" toolbar="full" content-type="html" />
+    <quill-editor
+      ref="editor"
+      v-model:content="model"
+      enable
+      :modules="modules"
+      :placeholder="prop.placeholder"
+      toolbar="full"
+      content-type="html"
+    />
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .rich-text-editor {
   color: #282828;
 }

@@ -108,6 +108,7 @@ onBeforeMount(async () => {
               />
               <rich-text-editor
                 v-model="question_content"
+                :placeholder="'请输入您的问题描述'"
               />
             </div>
             <template #footer>
