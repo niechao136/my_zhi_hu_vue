@@ -5,12 +5,13 @@ import { RouterView, useRouter } from 'vue-router'
 import logo from '@/assets/image/logo.svg'
 import { Avatar, BellFilled, Search } from '@element-plus/icons-vue'
 import { post } from '@/api'
-import { useLoading } from '@/hook'
+import { useLoading, useMsg } from '@/hook'
 import { useToken, useUser } from '@/store'
 import RichTextEditor from '@/components/RichTextEditor.vue'
 
 const { currentRoute, push } = useRouter()
 const { startLoading, stopLoading } = useLoading()
+const { successMsg, errorMsg } = useMsg()
 const { initToken, clearToken } = useToken()
 const { getOwner } = useUser()
 const { owner } = toRefs(useUser())
@@ -44,6 +45,23 @@ const askQuestion = () => {
   question_title.value = ''
   question_content.value = ''
   show_ask.value = true
+}
+const submitAsk = async () => {
+  startLoading('ask')
+  const res = await post({
+    url: 'question/add',
+    data: {
+      title: question_title.value.trim(),
+      content: question_content.value.trim(),
+    }
+  })
+  if (res?.data?.status === 200) {
+    show_ask.value = false
+    successMsg('新增提问成功')
+  } else {
+    errorMsg('新增提问失败')
+  }
+  stopLoading('ask')
 }
 
 const show_avatar = ref(false)
@@ -113,7 +131,7 @@ onBeforeMount(async () => {
             </div>
             <template #footer>
               <div class="dialog-footer">
-                <el-button type="primary" :disabled="!allow_ask">提交</el-button>
+                <el-button type="primary" :disabled="!allow_ask" @click="submitAsk">提交</el-button>
               </div>
             </template>
           </el-dialog>
