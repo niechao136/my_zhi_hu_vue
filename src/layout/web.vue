@@ -37,13 +37,14 @@ watch(currentRoute, newRoute => {
 const show_ask = ref(false)
 const question_title = ref('')
 const question_content = ref('')
+const question_html = ref('')
 const allow_ask = ref(false)
 watchEffect(() => {
-  allow_ask.value = !!question_title.value.trim() && !!question_content.value.trim()
+  allow_ask.value = !!question_title.value.trim() && !!question_html.value.trim()
 })
 const askQuestion = () => {
   question_title.value = ''
-  question_content.value = ''
+  question_html.value = ''
   show_ask.value = true
 }
 const submitAsk = async () => {
@@ -125,7 +126,8 @@ onBeforeMount(async () => {
                 :placeholder="'请输入您的问题'"
               />
               <rich-text-editor
-                v-model="question_content"
+                v-model:html="question_html"
+                v-model:content="question_content"
                 :placeholder="'请输入您的问题描述'"
               />
             </div>

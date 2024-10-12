@@ -17,7 +17,8 @@ const prop = defineProps({
 })
 
 const editor = ref<QuillEditor>(null)
-const model = defineModel<string>()
+const model = defineModel<string>('html')
+const content = defineModel<string>('content')
 const modules = ref([
   {
     name: 'imageUploader',
@@ -46,6 +47,7 @@ const modules = ref([
   }
 ])
 watch(model, newVal => {
+  content.value = editor.value.getText()
   if (newVal === '') {
     editor.value.setHTML('')
   }
