@@ -54,6 +54,7 @@ const submitAsk = async () => {
     data: {
       title: question_title.value.trim(),
       content: question_content.value.trim(),
+      html: question_html.value.trim(),
     }
   })
   if (res?.data?.status === 200) {
